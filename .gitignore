@@ -1,0 +1,5 @@
+build/
+sudoku
+test_sudoku
+test_alloc_fail
+*.o
