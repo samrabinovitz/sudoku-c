@@ -23,8 +23,15 @@ SudokuBoard *board_create(void) {
 
 SudokuBoard *board_clone(const SudokuBoard *source) {
     /* STUDENT TODO 3: Return a separate board with independent cell storage. */
-    (void)source;
-    return NULL;
+    if (source == NULL || source->cells == NULL) {
+        return NULL;
+    }
+    SudokuBoard *copy = board_create();
+    if (copy == NULL) {
+        return NULL;
+    }
+    board_copy(copy,source);
+    return copy;
 }
 
 void board_destroy(SudokuBoard **board_ptr) {
