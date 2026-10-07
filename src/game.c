@@ -31,12 +31,32 @@ static unsigned char *create_fixed_map(const SudokuBoard *puzzle) {
 
 SudokuGame *game_create(void) {
     /* STUDENT TODO 5: Construct an empty game object. */
-    return NULL;
+    SudokuGame *game = malloc(sizeof *game);
+    if (game == NULL) {
+        return NULL;
+    }
+    game->puzzle = NULL;
+    game->solution = NULL;
+    game->fixed = NULL;
+    history_init(&game->history);
+    game->difficulty = DIFFICULTY_MEDIUM;
+    game->active = 0;
+    return game;
 }
 
 void game_destroy(SudokuGame **game_ptr) {
     /* STUDENT TODO 5: Release every allocation owned by the game. */
-    (void)game_ptr;
+    SudokuGame *game;
+    if (game_ptr == NULL || *game_ptr == NULL) {
+        return;
+    }
+    game = *game_ptr;
+    board_destroy(&game->puzzle);
+    board_destroy(&game->solution);
+    free(game->fixed);
+    history_destroy(&game->history);
+    free(game);
+    *game_ptr = NULL;
 }
 
 int game_start_new(SudokuGame *game, Difficulty difficulty) {
