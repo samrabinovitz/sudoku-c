@@ -64,10 +64,41 @@ int game_start_new(SudokuGame *game, Difficulty difficulty) {
      * STUDENT TODO 6: Replace the current game with a newly generated one.
      * A failed replacement must leave an existing game unchanged.
      */
-    (void)game;
-    (void)difficulty;
-    (void)create_fixed_map;
-    return 0;
+    SudokuBoard *new_solution;
+    SudokuBoard * new_puzzle;
+    unsigned char *new_fixed;
+    int holes = 0;
+
+    if (game == NULL) {
+        return 0;
+    }
+
+    new_solution = sudoku_generate_solution();
+    if (new_solution == NULL) {
+        return 0;
+    }
+    new_puzzle = sudoku_generate_puzzle(new_solution, difficulty, &holes);
+    if (new_puzzle == NULL) {
+        board_destroy(&new_solution);
+        return 0;
+    }
+    new_fixed = create_fixed_map(new_puzzle);
+    if (new_fixed == NULL) {
+        board_destroy(&new_puzzle);
+        board_destroy(&new_solution);
+        return 0;
+    }
+
+    board_destroy(&game->puzzle);
+    board_destroy(&game->solution);
+    free(game->fixed);
+    game->solution = new_solution;
+    game->puzzle = new_puzzle;
+    game->fixed = new_fixed;
+    game->difficulty = difficulty;
+    game->active = 1;
+    history_clear(&game->history);
+    return holes;
 }
 
 int game_cell_is_fixed(const SudokuGame *game, int row, int column) {
